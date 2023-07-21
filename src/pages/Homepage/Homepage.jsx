@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
-import { View, StyleSheet, Text, ActivityIndicator, Image, FlatList, SafeAreaView, TouchableWithoutFeedback } from "react-native"
-import promise from "../config/data.config"
-import Card from "../components/Card/Card"
-import API from "../config/apiKey"
+import { View, Text, ActivityIndicator, Image, FlatList, SafeAreaView } from "react-native"
+import promise from "../../config/data.config"
+import Card from "../../components/Card"
+import API from "../../config/apiKey"
+import styles from "./Homepage.style"
 
 export default function Homepage({ navigation }) {
     const [isLoading, setIsLoading] = useState(true)
@@ -22,8 +23,8 @@ export default function Homepage({ navigation }) {
         setIsLoading(false)
     }
 
-    const navigate = () => {
-        navigation.navigate("newsDetailPage")
+    const navigate = (news) => {
+        navigation.navigate("newsDetailPage", news)
     }
 
     useEffect(() => {
@@ -38,16 +39,14 @@ export default function Homepage({ navigation }) {
                         <ActivityIndicator size={50} />
                     ) : !news ? (
                         <>
-                            <Image source={require("../assets/icons/x.png")} style={{ width: 50, height: 50, tintColor: "black" }}></Image>
+                            <Image source={require("../../assets/icons/x.png")} style={{ width: 50, height: 50, tintColor: "black" }}></Image>
                             <Text style={{ fontSize: 24, marginVertical: 20 }}>No data</Text>
                         </>
                     ) : (
                         <>
                             <View style={{ flex: 1, width: "100%" }}>
                                 <FlatList style={{ flex: 1 }} contentContainerStyle={{ alignItems: "center" }} data={news} renderItem={({ item }) => (
-                                    <TouchableWithoutFeedback style={{ width: "100%", height: "100%", backgroundColor: "red" }} onPress={() => navigate()}>
-                                        <Card news={item} />
-                                    </TouchableWithoutFeedback>
+                                    <Card news={item} onNavigate={() => navigate(item)} />
                                 )} />
                             </View>
                         </>
@@ -58,17 +57,3 @@ export default function Homepage({ navigation }) {
     )
 }
 
-const styles = StyleSheet.create({
-    appContainer: {
-        height: "100%",
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    mainTitle: {
-        fontSize: 24,
-        textAlign: "center",
-        fontWeight: "bold",
-        marginVertical: 20
-    }
-})

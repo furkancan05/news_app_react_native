@@ -41,5 +41,8 @@ export default styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center"
+    },
+    button: {
+        backgroundColor: "transparent"
     }
 })
