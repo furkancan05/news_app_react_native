@@ -1,38 +1,28 @@
-import { useEffect, useState } from "react"
-import { View, Text, ActivityIndicator, Image, FlatList, SafeAreaView } from "react-native"
-import promise from "../../config/data.config"
+import { useEffect } from "react"
+import { View, Text, ActivityIndicator, Image, FlatList } from "react-native"
 import Card from "../../components/Card"
-import API from "../../config/apiKey"
 import styles from "./Homepage.style"
+import { useDispatch, useSelector } from "react-redux"
+import { getNews } from "../../redux/newsSlice"
 
 export default function Homepage({ navigation }) {
-    const [isLoading, setIsLoading] = useState(true)
-    const [news, setNews] = useState(null)
-    const api = new API()
-
-
-    const getNews = async () => {
-        const response = await fetch(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${api.getApiKey()}`).then(res => res.json())
-        setNews(response.articles)
-        setIsLoading(false)
-    }
-
-    const getNews2 = async () => {
-        const response = await promise
-        setNews(response.articles)
-        setIsLoading(false)
-    }
+    const dispatch = useDispatch()
+    const { news, isLoading } = useSelector((state) => state.newsState)
 
     const navigate = (news) => {
         navigation.navigate("newsDetailPage", news)
     }
 
     useEffect(() => {
-        getNews2()
+        dispatch(getNews())
     }, [])
 
+    const renderCard = ({ item }) => (
+        <Card news={item} onNavigate={() => navigate(item)} />
+    )
+
     return (
-        <SafeAreaView>
+        <View style={{ flex: 1 }}>
             <View style={styles.appContainer}>
                 {
                     isLoading ? (
@@ -45,15 +35,13 @@ export default function Homepage({ navigation }) {
                     ) : (
                         <>
                             <View style={{ flex: 1, width: "100%" }}>
-                                <FlatList style={{ flex: 1 }} contentContainerStyle={{ alignItems: "center" }} data={news} renderItem={({ item }) => (
-                                    <Card news={item} onNavigate={() => navigate(item)} />
-                                )} />
+                                <FlatList style={{ flex: 1 }} contentContainerStyle={{ alignItems: "center" }} data={news} renderItem={renderCard} />
                             </View>
                         </>
                     )
                 }
             </View>
-        </SafeAreaView>
+        </View>
     )
 }
 
